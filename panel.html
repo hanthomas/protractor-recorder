@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/javascript" src="panel.js"></script>
+    <style>
+        html {
+            display: block;
+            height: 100%;
+            min-height: 100%;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0;
+            height: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 8px;
+        }
+        
+        code {
+            flex: 1 auto;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.87);
+            color: rgba(255, 255, 255, 0.87);
+        }
+        
+        footer {
+            display: flex;
+            flex-direction: row;
+            min-height: 24px;
+            padding-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>
+        <img src="icon48.png" style="vertical-align: middle;"/>
+        Protractor Recorder
+    </h1>
+
+    <p>Record Protractor tests by interacting with the page via mouse or touch.</p>
+
+    <code contenteditable="true" spellcheck="false"></code>
+
+    <footer>
+        <button id="copy" style="display: none;">Copy to Clipboard</button>
+        &nbsp;
+        <button id="clear" style="display: none;">Clear</button>
+        &nbsp;&nbsp;&nbsp;
+        <div id="message" style="flex: 1 1 0; font-style: italic; text-align: right;"></div>
+    </footer>
+</body>
+
+</html>
