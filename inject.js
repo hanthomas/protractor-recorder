@@ -4,7 +4,7 @@
 
     Event.prototype.stopPropagation = function () { };
 
-    var url = window.location.hash;
+    var url = '';
     var mouse = [];
 
     document.addEventListener('click', function (e) {
@@ -50,9 +50,9 @@
 
     document.addEventListener('change', function (e) {
         if (e.target.tagName.toLowerCase() == 'input' && ['text', 'number'].indexOf(e.target.getAttribute('type').toLowerCase()) != -1)
-            log('element(by.css(\'' + selector(e.target) + '\'))' + '.clear().sendKeys("' + e.target.value + '");');
+            log('element(by.css(\'' + selector(e.target) + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
         else if (e.target.tagName.toLowerCase() == 'textarea')
-            log('element(by.css(\'' + selector(e.target) + '\'))' + '.clear().sendKeys("' + e.target.value + '");');
+            log('element(by.css(\'' + selector(e.target) + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
     });
 
     var selector = function (target) {
@@ -63,7 +63,7 @@
         else {
             var attr = ['ng-model', 'ng-href', 'name', 'aria-label'].reduce(function (a, b) { return a || (target.getAttribute(b) ? b : null); }, null);
             if (attr)
-                query = target.tagName.toLowerCase() + '[' + attr + '="' + target.getAttribute(attr) + '"]';
+                query = target.tagName.toLowerCase() + '[' + attr + '="' + target.getAttribute(attr).replace(/\\/g, '\\\\').replace(/\'/g, '\\\'').replace(/\"/g, '\\"').replace(/\0/g, '\\0') + '"]';
             else
                 query = target.tagName.toLowerCase();
 
@@ -79,9 +79,9 @@
 
         return query;
     };
-
+    
     var log = function (action) {
-        if (url != window.location.hash)
+        if (!url || url != window.location.hash)
             window.protractor.logs.push('// URL: ' + window.location.hash);
 
         url = window.location.hash;
