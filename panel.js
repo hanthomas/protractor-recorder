@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var code = document.createRange();
         code.selectNode(document.querySelector('code'));
         window.getSelection().addRange(code);
-
+        
         try {
             if (document.execCommand('copy'))
                 document.querySelector('#message').innerText = 'Copied to the clipboard on ' + (new Date()).toLocaleString();
@@ -40,6 +40,8 @@ function update(logs) {
         var code = document.querySelector('code');
         if (code)
             code.innerText = logs.join('\n');
+            
+        Prism.highlightAll();
             
         if (logs && logs.length > 0) {
             document.querySelector('#copy').style.display = '';
