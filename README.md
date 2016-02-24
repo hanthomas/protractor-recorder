@@ -12,4 +12,4 @@ Chrome extension to record Protractor E2E test scripts
 2. Launch **Developer Tools** by pressing F12
 3. Select **Protractor** tab
 4. Interact with your web site.  Each action is recorded in the Protractor Recorder console.
-5. When you're done, click **Copy to Clipboard* to copy the recorded script.
+5. When you're done, click **Copy to Clipboard** to copy the recorded script.
