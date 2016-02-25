@@ -13,3 +13,6 @@ Chrome extension to record Protractor E2E test scripts
 3. Select **Protractor** tab
 4. Interact with your web site.  Each action is recorded in the Protractor Recorder console.
 5. When you're done, click **Copy to Clipboard** to copy the recorded script.
+
+## Should I disable automatic synchronization?
+Check this box if the recorded scripts are timing out when run in Protractor.  Protractor has known issues with AngularJS applications that use **$timeout**.  See Protractor issues [#169](https://github.com/angular/protractor/issues/169) and [#2950](https://github.com/angular/protractor/issues/2950).
