@@ -36,6 +36,11 @@
             padding: 8px;
         }
         
+        header {
+            display: flex;
+            flex-direction: row;
+        }
+        
         footer {
             display: flex;
             flex-direction: row;
@@ -51,7 +56,13 @@
         Protractor Recorder
     </h1>
 
-    <p>Record Protractor tests by interacting with the page via mouse or touch.</p>
+    <header>
+        <div style="flex: 1 0 auto;">
+            Record Protractor tests by interacting with the page via mouse or touch.
+        </div>
+        <input type="checkbox" id="nosync"/>
+        <label for="nosync">Disable automatic synchronization</label>
+    </header>
 
     <pre><code class="language-javascript" contenteditable="true" spellcheck="false"></code></pre>
 

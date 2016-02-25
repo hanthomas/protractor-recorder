@@ -1,15 +1,17 @@
 (function () {
     window.protractor = {};
     window.protractor.logs = [];
+    window.protractor.ignoreSynchronization = false;
 
     Event.prototype.stopPropagation = function () { };
 
     var url = '';
+    var time = null;
     var mouse = [];
 
     document.addEventListener('click', function (e) {
         if (e.target.tagName.toLowerCase() != 'canvas')
-            log('element(by.css(\'' + selector(e.target) + '\'))' + '.click();');
+            log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.click();');
     });
 
     document.addEventListener('mousedown', function (e) {
@@ -23,11 +25,12 @@
     });
 
     document.addEventListener('mouseup', function (e) {
-        if (e.target.tagName.toLowerCase() == 'canvas' && mouse && mouse.length > 0 && mouse[0].target == e.target)
+        if (e.target.tagName.toLowerCase() == 'canvas' && mouse && mouse.length > 0 && mouse[0].target == e.target) {
             if (mouse.reduce(function (a, b) { return a.clientX - b.clientX; }, mouse[0]) <= 1 && mouse.reduce(function (a, b) { return a.clientY - b.clientY; }, mouse[0]) <= 1)
-                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target) + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).click().perform();');
+                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).click().perform();');
             else
-                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target) + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).mouseDown()' + mouse.reduce(function (a, b, i) { return i > 0 ? a + '.mouseMove({x: ' + (b.clientX - mouse[i - 1].clientX).toString() + ', y:' + (b.clientY - mouse[i - 1].clientY).toString() + '})' : ''; }, '') + '.mouseUp().perform();');
+                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).mouseDown()' + mouse.reduce(function (a, b, i) { return i > 0 ? a + '.mouseMove({x: ' + (b.clientX - mouse[i - 1].clientX).toString() + ', y:' + (b.clientY - mouse[i - 1].clientY).toString() + '})' : ''; }, '') + '.mouseUp().perform();');
+        }
     });
 
     document.addEventListener('touchstart', function (e) {
@@ -41,18 +44,19 @@
     });
 
     document.addEventListener('touchend', function (e) {
-        if (e.target.tagName.toLowerCase() == 'canvas' && mouse && mouse.length > 0 && mouse[0].target == e.target)
+        if (e.target.tagName.toLowerCase() == 'canvas' && mouse && mouse.length > 0 && mouse[0].target == e.target) {
             if (mouse.reduce(function (a, b) { return a.clientX - b.clientX; }, mouse[0]) <= 1 && mouse.reduce(function (a, b) { return a.clientY - b.clientY; }, mouse[0]) <= 1)
-                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target) + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).click().perform();');
+                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).click().perform();');
             else
-                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target) + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).mouseDown()' + mouse.reduce(function (a, b, i) { return i > 0 ? a + '.mouseMove({x: ' + (b.clientX - mouse[i - 1].clientX).toString() + ', y:' + (b.clientY - mouse[i - 1].clientY).toString() + '})' : ''; }, '') + '.mouseUp().perform();');
+                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).mouseDown()' + mouse.reduce(function (a, b, i) { return i > 0 ? a + '.mouseMove({x: ' + (b.clientX - mouse[i - 1].clientX).toString() + ', y:' + (b.clientY - mouse[i - 1].clientY).toString() + '})' : ''; }, '') + '.mouseUp().perform();');
+        }
     });
 
     document.addEventListener('change', function (e) {
         if (e.target.tagName.toLowerCase() == 'input' && ['text', 'number'].indexOf(e.target.getAttribute('type').toLowerCase()) != -1)
-            log('element(by.css(\'' + selector(e.target) + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
+            log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
         else if (e.target.tagName.toLowerCase() == 'textarea')
-            log('element(by.css(\'' + selector(e.target) + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
+            log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
     });
 
     var selector = function (target) {
@@ -81,6 +85,14 @@
     };
     
     var log = function (action) {
+        if (window.protractor.logs.length == 0)
+            window.protractor.logs.push('browser.driver.manage().window().setSize(' + window.outerWidth + ', ' + window.outerHeight + ');');
+        
+        if (window.protractor.ignoreSynchronization && time)
+            window.protractor.logs.push('browser.sleep(' + (new Date() - time).toString() + ');');
+
+        time = new Date();
+        
         if (!url || url != window.location.hash)
             window.protractor.logs.push('// URL: ' + window.location.hash);
 
@@ -88,6 +100,6 @@
 
         window.protractor.logs.push(action);
     };
-
+    
     return window.protractor.logs;
 })();

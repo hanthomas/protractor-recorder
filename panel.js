@@ -23,6 +23,13 @@ document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('#message').innerText = '';
     }, false);
     
+    document.querySelector('#nosync').addEventListener('change', function () {
+        if (document.querySelector('#nosync').checked)
+            chrome.devtools.inspectedWindow.eval('(function () { window.protractor.ignoreSynchronization = true; window.protractor.logs.push(\'browser.ignoreSynchronization = true;\'); })()');
+        else
+            chrome.devtools.inspectedWindow.eval('(function () { window.protractor.ignoreSynchronization = false; window.protractor.logs.push(\'browser.ignoreSynchronization = false; })()');
+    }, false);
+
     document.querySelector('code').addEventListener('focus', function () {
         editing = true;
     }, false);
