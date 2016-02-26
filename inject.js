@@ -53,7 +53,7 @@
     });
 
     document.addEventListener('change', function (e) {
-        if (e.target.tagName.toLowerCase() == 'input' && ['text', 'number'].indexOf(e.target.getAttribute('type').toLowerCase()) != -1)
+        if (e.target.tagName.toLowerCase() == 'input' && ['text', 'password', 'number'].indexOf(e.target.getAttribute('type').toLowerCase()) != -1)
             log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
         else if (e.target.tagName.toLowerCase() == 'textarea')
             log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
