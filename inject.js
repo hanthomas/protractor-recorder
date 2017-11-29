@@ -9,9 +9,12 @@
     var time = null;
     var mouse = [];
 
-    document.addEventListener('click', function (e) {
-        if (e.target.tagName.toLowerCase() != 'canvas')
-            log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.click();');
+    document.addEventListener('click', function (e) {                
+        if (window.getSelection().toString()){
+            log('expect(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') +  '\')).getText()).toContain([\'' + window.getSelection().toString() + '\']);');
+        }
+        else if (e.target.tagName.toLowerCase() != 'canvas')
+            log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\')).click();');
     });
 
     document.addEventListener('mousedown', function (e) {
@@ -24,13 +27,19 @@
             mouse.push(e);
     });
 
-    document.addEventListener('mouseup', function (e) {
-        if (e.target.tagName.toLowerCase() == 'canvas' && mouse && mouse.length > 0 && mouse[0].target == e.target) {
-            if (mouse.reduce(function (a, b) { return a.clientX - b.clientX; }, mouse[0]) <= 1 && mouse.reduce(function (a, b) { return a.clientY - b.clientY; }, mouse[0]) <= 1)
-                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).click().perform();');
-            else
-                log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).mouseDown()' + mouse.reduce(function (a, b, i) { return i > 0 ? a + '.mouseMove({x: ' + (b.clientX - mouse[i - 1].clientX).toString() + ', y:' + (b.clientY - mouse[i - 1].clientY).toString() + '})' : ''; }, '') + '.mouseUp().perform();');
-        }
+    document.addEventListener('mouseup', function (e) {        
+            if (window.getSelection().toString()){
+               log('expect([\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'].getText()).toContain([\'' + window.getSelection().toString() + '\']);');
+            }
+            else {
+                if (e.target.tagName.toLowerCase() == 'canvas' && mouse && mouse.length > 0 && mouse[0].target == e.target) {
+                    if (mouse.reduce(function (a, b) { return a.clientX - b.clientX; }, mouse[0]) <= 1 && mouse.reduce(function (a, b) { return a.clientY - b.clientY; }, mouse[0]) <= 1)
+                        log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).click().perform();');
+                    else
+                        log('browser.driver.actions().mouseMove(element(by.css(\'' + selector(mouse[0].target).replace(/\\\"/g, '\\\\\\"') + '\')), {x: ' + mouse[0].clientX.toString() + ', y:' + mouse[0].clientY.toString() + '}).mouseDown()' + mouse.reduce(function (a, b, i) { return i > 0 ? a + '.mouseMove({x: ' + (b.clientX - mouse[i - 1].clientX).toString() + ', y:' + (b.clientY - mouse[i - 1].clientY).toString() + '})' : ''; }, '') + '.mouseUp().perform();');
+                }
+            }
+
     });
 
     document.addEventListener('touchstart', function (e) {
@@ -53,7 +62,9 @@
     });
 
     document.addEventListener('change', function (e) {
-        if (e.target.tagName.toLowerCase() == 'input' && ['text', 'password', 'number'].indexOf(e.target.getAttribute('type').toLowerCase()) != -1)
+        if (e.target.tagName.toLowerCase() == 'input' 
+            && ( e.target.attributes.hasOwnProperty('matinput') != -1 
+              || ['text', 'password', 'number'].indexOf(e.target.getAttribute('type').toLowerCase()) != -1))
             log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
         else if (e.target.tagName.toLowerCase() == 'textarea')
             log('element(by.css(\'' + selector(e.target).replace(/\\\"/g, '\\\\\\"') + '\'))' + '.clear().sendKeys(\'' + e.target.value + '\');');
